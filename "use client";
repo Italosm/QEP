@@ -1,0 +1,128 @@
+"use client";
+
+import { Politician } from "@/types";
+import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
+import Image from "next/image";
+
+export const columns: ColumnDef<Politician>[] = [
+  {
+    accessorKey: "urlFoto",
+    header: "",
+    cell: ({ row }) => {
+      return (
+        <Image
+          src={row.original.urlFoto}
+          alt={`Foto de ${row.original.nome}`}
+          width={40}
+          height={40}
+          className="rounded-full"
+        />
+      );
+    },
+  },
+  {
+    accessorKey: "nome",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Nome
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <Link
+          href={`/politico/${row.original.id}`}
+          className="hover:underline"
+        >
+          {row.original.nome}
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: "casa",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Casa
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "ufs",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          UFs
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return row.original.ufs.join(", ");
+    },
+    filterFn: (row, id, value) => {
+      const ufs: string[] = row.getValue(id);
+      return ufs.includes(value);
+    },
+  },
+  {
+    accessorKey: "quantidadeLegislaturas",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Qtd. Legislaturas
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "primeiraLegislatura",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Primeira Legislatura
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "ultimaLegislatura",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Última Legislatura
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+];

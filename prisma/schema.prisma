@@ -1,0 +1,26 @@
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Parlamentar {
+    id_unico               String  @id @map("id_unico")
+    id_original            Int     @map("id_original")
+    nome                   String? @map("nome")
+    casa                   String  @map("casa")
+    cargo                  String  @map("cargo")
+    url_foto               String? @map("url_foto")
+    total_legislaturas     Int     @map("total_legislaturas")
+    tempo_anos             Int     @map("tempo_anos")
+    tempo_meses            Int     @map("tempo_meses")
+    tempo_dias             Int     @map("tempo_dias")
+    ufs                    String  @map("ufs")
+    partidos               String  @map("partidos")
+    historico_legislaturas String  @map("historico_legislaturas")
+
+    @@map("parlamentares")
+}
