@@ -8,7 +8,7 @@ export default async function Home() {
   const totalDeputados = politicians.filter((p) => p.casa === "Câmara").length;
   const totalSenadores = politicians.filter((p) => p.casa === "Senado").length;
   const maiorNumeroLegislaturas = Math.max(
-    ...politicians.map((p) => p.quantidadeLegislaturas ?? 0),
+    ...politicians.map((p) => p.total_legislaturas ?? 0),
   );
   const totalLegislaturas = new Set(
     politicians.flatMap((p) => p.legislaturas ?? []),

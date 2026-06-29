@@ -123,13 +123,13 @@ export const columns: ColumnDef<Politician>[] = [
     },
   },
   {
-    accessorKey: "quantidadeLegislaturas",
+    accessorKey: "total_legislaturas",
     header: ({ column }) => (
       <SortingHeader column={column}>Qtd. Legislaturas</SortingHeader>
     ),
     cell: ({ row }) => (
       <div className="text-center w-full">
-        {row.original.quantidadeLegislaturas}
+        {row.original.total_legislaturas}
       </div>
     ),
   },
@@ -140,6 +140,18 @@ export const columns: ColumnDef<Politician>[] = [
     ),
     // Typed row to avoid any lint errors
     cell: ({ row }: { row: Row<Politician> }) => row.original.tenure,
+    sortingFn: (rowA, rowB) => {
+      const a = rowA.original;
+      const b = rowB.original;
+      // Compare by years, then months, then days for accurate sorting
+      if (a.tempo_anos !== b.tempo_anos) {
+        return a.tempo_anos - b.tempo_anos;
+      }
+      if (a.tempo_meses !== b.tempo_meses) {
+        return a.tempo_meses - b.tempo_meses;
+      }
+      return a.tempo_dias - b.tempo_dias;
+    },
   },
   // Column for filtering by legislatura (now visible)
   {
