@@ -65,18 +65,19 @@ export function aggregateData(
         if (!legislaturas.includes(legislature)) {
           existingPolitician.legislaturas = [...legislaturas, legislature];
         }
+        const existingUfs = existingPolitician.ufs as string[]; // Assert to string[] as it's always stored as an array
         for (const uf of ufs) {
-          if (uf && !existingPolitician.ufs.includes(uf)) {
-            existingPolitician.ufs.push(uf);
+          if (uf && !existingUfs.includes(uf)) {
+            existingUfs.push(uf);
           }
         }
-        existingPolitician.urlFoto = urlFoto; // Update photo URL
+        existingPolitician.url_foto = urlFoto; // Update photo URL
       } else {
         politiciansMap.set(id, {
           id,
           nome,
           nomeCivil,
-          urlFoto,
+          url_foto: urlFoto,
           casa: house,
           legislaturas: [legislature],
           ufs: ufs.filter(Boolean),
