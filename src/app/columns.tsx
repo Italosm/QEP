@@ -60,8 +60,6 @@ export const columns: ColumnDef<Politician>[] = [
     accessorKey: "nome",
     header: ({ column }) => <SortingHeader column={column}>Nome</SortingHeader>,
     cell: ({ row }) => {
-      // Debug: log id_unico
-      console.log("row.id_unico:", row.original.id_unico);
       return (
         <Link
           href={`/politico/${row.original.id_unico}`}
@@ -169,11 +167,29 @@ export const columns: ColumnDef<Politician>[] = [
   // Column for filtering by legislatura (now visible)
   {
     accessorKey: "legislaturas",
-    // keep visible so filter UI can access it
-    enableHiding: false,
+    header: ({ column }) => (
+      <SortingHeader column={column}>Legislaturas</SortingHeader>
+    ),
+    cell: ({ row }) => {
+      const legislaturas = row.original.legislaturas ?? [];
+      return (
+        <div className="flex flex-wrap max-w-xs">
+          {legislaturas.map((leg) => (
+            <Badge key={leg}>{leg}</Badge>
+          ))}
+        </div>
+      );
+    },
     filterFn: (row, id, value) => {
-      const legislaturas: number[] = row.getValue(id);
+      const legislaturas: number[] = row.getValue(id) ?? [];
       return legislaturas.includes(Number(value));
+    },
+        sortingFn: (rowA, rowB) => {
+      const a = rowA.original.legislaturas ?? [];
+      const b = rowB.original.legislaturas ?? [];
+      const latestA = Math.max(...a);
+      const latestB = Math.max(...b);
+      return latestA - latestB;
     },
   },
 ];

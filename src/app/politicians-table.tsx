@@ -20,7 +20,6 @@ import {
   getFilteredRowModel,
   SortingState,
   ColumnFiltersState,
-  VisibilityState,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -45,14 +44,10 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     [politicians],
   );
 
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "tenure", desc: true },
-  ]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    // Hide the legislaturas column by default, as it's only for filtering
-    legislaturas: false,
-  });
+    const [sorting, setSorting] = useState<SortingState>([
+      { id: "legislaturas", desc: true },
+    ]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -64,7 +59,6 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     initialState: {
       pagination: {
         pageSize: 50,
@@ -73,7 +67,6 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
     },
   });
 
@@ -97,7 +90,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
   return (
     <div>
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <Input
@@ -173,6 +166,23 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
                   {uf}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={table.getColumn("legislaturas")?.getIsSorted() || "desc"}
+            onValueChange={(value) =>
+              table
+                .getColumn("legislaturas")
+                ?.toggleSorting(value === "desc" ? true : false)
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Ordenar por..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="desc">Mais Recente</SelectItem>
+              <SelectItem value="asc">Mais Antiga</SelectItem>
             </SelectContent>
           </Select>
         </div>

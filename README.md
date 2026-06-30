@@ -2,6 +2,22 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+## Sobre o Projeto
+
+Este projeto é uma análise histórica do Congresso Nacional do Brasil, focando no tempo de mandato dos políticos (deputados e senadores). Ele processa dados públicos para identificar:
+
+- O número total de deputados e senadores.
+- O maior número de legislaturas servidas por um único político.
+- O total de legislaturas analisadas.
+
+A aplicação utiliza [Next.js](https://nextjs.org) com [TypeScript](https://www.typescriptlang.org/) para o frontend e backend (carregamento de dados no servidor). Os dados são persistidos em um banco de dados [SQLite](https://www.sqlite.org/index.html) e acessados através do ORM [Prisma](https://www.prisma.io/). A interface do usuário é estilizada com [Tailwind CSS](https://tailwindcss.com/).
+
+---
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# This is NOT the Next.js you know
+
 First, run the development server:
 
 ```bash
