@@ -82,10 +82,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     [data],
   );
 
-  const houseFilter = table.getColumn("casa")?.getFilterValue() as string;
-  const legislatureFilter = table
-    .getColumn("legislaturas")
-    ?.getFilterValue() as string;
+  const legislatureSort = table.getColumn("legislaturas")?.getIsSorted();
 
   return (
     <div>
@@ -170,7 +167,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
           </Select>
 
           <Select
-            value={table.getColumn("legislaturas")?.getIsSorted() || "desc"}
+            value={legislatureSort === "desc" ? "desc" : legislatureSort === "asc" ? "asc" : "false"}
             onValueChange={(value) => {
               if (value === "false") {
                 table.getColumn("legislaturas")?.clearSorting();
