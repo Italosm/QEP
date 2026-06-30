@@ -28,11 +28,11 @@ const SortingHeader = ({
     {children}
     <div className="ml-2">
       {column.getIsSorted() === "desc" ? (
-        <ArrowDown className="h-4 w-4" />
+        <ArrowDown className="h-4 w-4 text-gray-700" />
       ) : column.getIsSorted() === "asc" ? (
-        <ArrowUp className="h-4 w-4" />
+        <ArrowUp className="h-4 w-4 text-gray-700" />
       ) : (
-        <ArrowUpDown className="h-4 w-4 text-slate-300" />
+        <ArrowUpDown className="h-4 w-4 text-gray-500" />
       )}
     </div>
   </Button>
@@ -77,8 +77,8 @@ export const columns: ColumnDef<Politician>[] = [
       const casa = row.original.casa;
       const isSenado = casa === "Senado";
       const badgeClass = isSenado
-        ? "bg-emerald-100 text-emerald-800"
-        : "bg-sky-100 text-sky-800";
+        ? "bg-sky-100 text-sky-800"
+        : "bg-emerald-100 text-emerald-800";
 
       return (
         <span
@@ -184,7 +184,7 @@ export const columns: ColumnDef<Politician>[] = [
       const legislaturas: number[] = row.getValue(id) ?? [];
       return legislaturas.includes(Number(value));
     },
-        sortingFn: (rowA, rowB) => {
+    sortingFn: (rowA, rowB) => {
       const a = rowA.original.legislaturas ?? [];
       const b = rowB.original.legislaturas ?? [];
       const latestA = Math.max(...a);

@@ -128,3 +128,13 @@
     @apply font-sans;
   }
 }
+
+[data-sorted="asc"],
+[data-sorted="desc"] {
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+[data-sorted="asc"] > *,
+[data-sorted="desc"] > * {
+  font-weight: 600;
+}

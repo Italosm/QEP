@@ -10,9 +10,25 @@ export default async function Home() {
   const maiorNumeroLegislaturas = Math.max(
     ...politicians.map((p) => p.total_legislaturas ?? 0),
   );
-  const totalLegislaturas = new Set(
-    politicians.flatMap((p) => p.legislaturas ?? []),
-  ).size;
+
+  const legislaturas = [
+    ...new Set(politicians.flatMap((p) => p.legislaturas ?? [])),
+  ].sort((a, b) => a - b);
+  const totalLegislaturas = legislaturas.length;
+
+  const deputadosPorLegislatura = legislaturas.map(
+    (leg) =>
+      politicians.filter(
+        (p) => p.casa === "Câmara" && p.legislaturas?.includes(leg),
+      ).length,
+  );
+
+  const senadoresPorLegislatura = legislaturas.map(
+    (leg) =>
+      politicians.filter(
+        (p) => p.casa === "Senado" && p.legislaturas?.includes(leg),
+      ).length,
+  );
 
   return (
     <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
@@ -25,8 +41,16 @@ export default async function Home() {
         </p>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 my-8">
-          <KPICard label="Deputados" value={totalDeputados} />
-          <KPICard label="Senadores" value={totalSenadores} />
+          <KPICard
+            label="Deputados"
+            value={totalDeputados}
+            data={deputadosPorLegislatura}
+          />
+          <KPICard
+            label="Senadores"
+            value={totalSenadores}
+            data={senadoresPorLegislatura}
+          />
           <KPICard
             label="Maior Nº de Legislaturas"
             value={maiorNumeroLegislaturas}

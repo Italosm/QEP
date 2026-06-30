@@ -49,7 +49,8 @@ export function DataTable<TData, TValue>({
                 return (
                   <TableHead
                     key={header.id}
-                    className="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                    data-sorted={header.column.getIsSorted()}
                   >
                     {header.isPlaceholder
                       ? null
@@ -75,6 +76,7 @@ export function DataTable<TData, TValue>({
                   <TableCell
                     key={cell.id}
                     className="px-6 py-4 whitespace-nowrap"
+                    data-sorted={cell.column.getIsSorted()}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

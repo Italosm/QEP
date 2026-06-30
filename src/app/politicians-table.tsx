@@ -13,6 +13,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
@@ -22,20 +31,23 @@ import {
   ColumnFiltersState,
 } from "@tanstack/react-table";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 interface PoliticiansTableProps {
   politicians: Politician[];
 }
 
+const ufsByRegion = {
+  Norte: ["AC", "AP", "AM", "PA", "RO", "RR", "TO"],
+  Nordeste: ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"],
+  "Centro-Oeste": ["DF", "GO", "MT", "MS"],
+  Sudeste: ["ES", "MG", "RJ", "SP"],
+  Sul: ["PR", "RS", "SC"],
+};
+
 export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
   const data = useMemo(() => politicians, [politicians]);
 
-  // Build a list of all distinct legislatures present in the dataset.
-  // Some politician records may not have the optional `legislaturas` field
-  // (it is defined as `legislaturas?: number[]` in the type definition).
-  // Using `p.legislaturas ?? []` guarantees we always flatten an array and
-  // prevents a TypeError when the field is undefined.
   const allLegislatures = useMemo(
     () =>
       [...new Set(politicians.flatMap((p) => p.legislaturas ?? []))].sort(
@@ -44,12 +56,11 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     [politicians],
   );
 
-            const [sorting, setSorting] = useState<SortingState>([
-      { id: "legislaturas", desc: true },
-    ]);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "legislaturas", desc: true },
+  ]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -70,8 +81,6 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     },
   });
 
-  // Extract distinct UF codes. The `ufs` field can be a string, a CSV string, or an array of strings.
-  // We normalize it to an array of trimmed strings and then remove duplicates.
   const ufs = useMemo(
     () =>
       [
@@ -86,6 +95,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
   const legislatureFilter = table
     .getColumn("legislaturas")
     ?.getFilterValue() as string;
+  const ufFilter = table.getColumn("ufs")?.getFilterValue() as string;
 
   const legislatureSort = table.getColumn("legislaturas")?.getIsSorted();
 
@@ -93,8 +103,8 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     <div>
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+          <div className="relative flex items-center">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <Input
               placeholder="Filtrar por nome..."
               value={
@@ -103,14 +113,13 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
               onChange={(event) =>
                 table.getColumn("nome")?.setFilterValue(event.target.value)
               }
-              className="pl-10 w-full"
+              className="pl-10 w-full h-10"
             />
           </div>
 
           <Select
             value={legislatureFilter ?? ""}
             onValueChange={(value) =>
-              // Empty value means no filter (Todas as legislaturas)
               table
                 .getColumn("legislaturas")
                 ?.setFilterValue(value === "" ? undefined : value)
@@ -120,7 +129,6 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
               <SelectValue placeholder="Selecione a Legislatura" />
             </SelectTrigger>
             <SelectContent>
-              {/* Option to show all legislaturas */}
               <SelectItem value="">Todas as Legislaturas</SelectItem>
               {allLegislatures.map((leg) => (
                 <SelectItem key={leg} value={leg.toString()}>
@@ -148,32 +156,54 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
             </SelectContent>
           </Select>
 
-          <Select
-            value={
-              (table.getColumn("ufs")?.getFilterValue() as string) ?? "todas"
-            }
-            onValueChange={(value) =>
-              table
-                .getColumn("ufs")
-                ?.setFilterValue(value === "todas" ? undefined : value)
-            }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Filtrar por UF" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="todas">Todos os UFs</SelectItem>
-              {ufs.map((uf) => (
-                <SelectItem key={uf} value={uf}>
-                  {uf}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex w-full items-center justify-between gap-1.5 rounded-lg border border-slate-300 bg-white py-2 pr-2 pl-3 text-sm whitespace-nowrap transition-colors outline-none select-none hover:border-slate-400 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground h-10">
+                {ufFilter || "Filtrar por UF"}
+                <ChevronDown className="pointer-events-none size-4 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem
+                onSelect={() =>
+                  table.getColumn("ufs")?.setFilterValue(undefined)
+                }
+              >
+                Todos os UFs
+              </DropdownMenuItem>
+              {Object.entries(ufsByRegion).map(([region, regionUfs]) => {
+                const availableUfs = regionUfs.filter((uf) => ufs.includes(uf));
+                if (availableUfs.length === 0) return null;
+                return (
+                  <DropdownMenuSub key={region}>
+                    <DropdownMenuSubTrigger>{region}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      {availableUfs.map((uf) => (
+                        <DropdownMenuItem
+                          key={uf}
+                          onSelect={() =>
+                            table.getColumn("ufs")?.setFilterValue(uf)
+                          }
+                        >
+                          {uf}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Select
-            value={legislatureSort === "desc" ? "desc" : legislatureSort === "asc" ? "asc" : "false"}
-                                    onValueChange={(value) => {
+            value={
+              legislatureSort === "desc"
+                ? "desc"
+                : legislatureSort === "asc"
+                  ? "asc"
+                  : "false"
+            }
+            onValueChange={(value) => {
               if (value === "false") {
                 setSorting([{ id: "tenure", desc: true }]);
               } else {

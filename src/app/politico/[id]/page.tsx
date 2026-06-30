@@ -35,8 +35,15 @@ export default async function PoliticianPage({
     notFound();
   }
 
-  const { nome, casa, url_foto, quantidadeLegislaturas, ufs, legislaturas } =
-    politician;
+  const {
+    nome,
+    casa,
+    url_foto,
+    quantidadeLegislaturas,
+    ufs,
+    legislaturas,
+    partidos,
+  } = politician;
   // Ensure legislaturas is an array for timeline calculations
   const legislaturasArray = legislaturas ?? [];
   // Derive first and last legislatura from the array, if available
@@ -62,8 +69,14 @@ export default async function PoliticianPage({
 
   const isSenado = casa === "Senado";
   const badgeClass = isSenado
-    ? "bg-emerald-100 text-emerald-800"
-    : "bg-sky-100 text-sky-800";
+    ? "bg-sky-100 text-sky-800"
+    : "bg-emerald-100 text-emerald-800";
+
+  const timelineActiveBubbleClass = isSenado
+    ? "bg-sky-100 text-sky-800"
+    : "bg-emerald-100 text-emerald-800";
+
+  const timelineLineClass = isSenado ? "bg-sky-200" : "bg-emerald-200";
 
   return (
     <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
@@ -107,11 +120,23 @@ export default async function PoliticianPage({
             label="UFs"
             value={Array.isArray(ufs) ? ufs.join(", ") : ufs}
           />
+          <KPICard
+            label="Partidos"
+            value={
+              Array.isArray(partidos)
+                ? partidos.join(", ")
+                : partidos
+                  ? partidos
+                  : ""
+            }
+          />
         </div>
 
         <Timeline
           activeLegislatures={legislaturasArray}
           allLegislatures={allLegislaturesInRange}
+          activeClassName={timelineActiveBubbleClass}
+          lineClassName={timelineLineClass}
         />
       </div>
     </main>
