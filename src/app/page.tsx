@@ -1,19 +1,39 @@
-import { loadAllPoliticians } from "@/lib/load-data";
+import { loadAllPoliticians, loadDemocracyPoliticians } from "@/lib/load-data";
 import { KPICard } from "@/components/kpi-card";
 import { PoliticiansTable } from "./politicians-table";
+import { PeriodFilter } from "@/components/period-filter";
 
-export default async function Home() {
-  const politicians = await loadAllPoliticians();
+// 1. FORÇA O NEXT.JS A LER A URL EM TEMPO REAL (MATA O CACHE ESTÁTICO)
+export const dynamic = "force-dynamic";
+
+// 2. ATUALIZA A TIPAGEM PARA O PADRÃO DO NEXT 15 (PROMISE)
+interface HomeProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function Home(props: HomeProps) {
+  // 3. USA O AWAIT PARA LER A URL CORRETAMENTE
+  const params = await props.searchParams;
+  const periodo = params?.periodo || "moderno";
+
+  // Carrega os dados com base na escolha do período
+  const politicians =
+    periodo === "historico"
+      ? await loadAllPoliticians()
+      : await loadDemocracyPoliticians();
 
   const totalDeputados = politicians.filter((p) => p.casa === "Câmara").length;
   const totalSenadores = politicians.filter((p) => p.casa === "Senado").length;
-  const maiorNumeroLegislaturas = Math.max(
-    ...politicians.map((p) => p.total_legislaturas ?? 0),
-  );
+
+  const maiorNumeroLegislaturas =
+    politicians.length > 0
+      ? Math.max(...politicians.map((p) => p.total_legislaturas ?? 0))
+      : 0;
 
   const legislaturas = [
     ...new Set(politicians.flatMap((p) => p.legislaturas ?? [])),
   ].sort((a, b) => a - b);
+
   const totalLegislaturas = legislaturas.length;
 
   const deputadosPorLegislatura = legislaturas.map(
@@ -33,12 +53,22 @@ export default async function Home() {
   return (
     <main className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
-          Quem Está no Poder?
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Análise histórica do Congresso Nacional utilizando dados públicos.
-        </p>
+        <header className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+              Quem Está no Poder?
+            </h1>
+            <p className="text-sm text-slate-500 mt-1">
+              {periodo === "historico"
+                ? "Análise histórica completa do Congresso Nacional desde 1826."
+                : "Análise do Congresso Nacional na Nova República (Pós-1987)."}
+            </p>
+          </div>
+
+          <div className="shrink-0">
+            <PeriodFilter />
+          </div>
+        </header>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 my-8">
           <KPICard
