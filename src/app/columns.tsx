@@ -98,14 +98,7 @@ export const columns: ColumnDef<Politician>[] = [
     accessorKey: "ufs",
     header: ({ column }) => <SortingHeader column={column}>UFs</SortingHeader>,
     cell: ({ row }) => {
-      const ufs = Array.isArray(row.original.ufs)
-        ? row.original.ufs
-        : typeof row.original.ufs === "string"
-          ? row.original.ufs
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [];
+      const ufs = row.original.ufs.map((s) => s.trim()).filter(Boolean);
       return (
         <div className="flex flex-wrap max-w-xs">
           {ufs.map((uf) => (

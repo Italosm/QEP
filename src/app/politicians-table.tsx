@@ -81,18 +81,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     () =>
       [
         ...new Set(
-          data.flatMap((d) => {
-            if (Array.isArray(d.ufs)) {
-              return d.ufs.map((s) => s.trim()).filter(Boolean);
-            }
-            if (typeof d.ufs === "string") {
-              return d.ufs
-                .split(",")
-                .map((s) => s.trim())
-                .filter(Boolean);
-            }
-            return [];
-          }),
+          data.flatMap((d) => d.ufs.map((s) => s.trim()).filter(Boolean)),
         ),
       ].sort(),
     [data],
