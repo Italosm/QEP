@@ -44,7 +44,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     [politicians],
   );
 
-    const [sorting, setSorting] = useState<SortingState>([
+            const [sorting, setSorting] = useState<SortingState>([
       { id: "legislaturas", desc: true },
     ]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -81,6 +81,11 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
       ].sort(),
     [data],
   );
+
+  const houseFilter = table.getColumn("casa")?.getFilterValue() as string;
+  const legislatureFilter = table
+    .getColumn("legislaturas")
+    ?.getFilterValue() as string;
 
   const legislatureSort = table.getColumn("legislaturas")?.getIsSorted();
 
@@ -168,11 +173,11 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
 
           <Select
             value={legislatureSort === "desc" ? "desc" : legislatureSort === "asc" ? "asc" : "false"}
-            onValueChange={(value) => {
+                                    onValueChange={(value) => {
               if (value === "false") {
-                table.getColumn("legislaturas")?.clearSorting();
+                setSorting([{ id: "tenure", desc: true }]);
               } else {
-                table.getColumn("legislaturas")?.toggleSorting(value === "desc" ? true : false);
+                setSorting([{ id: "legislaturas", desc: value === "desc" }]);
               }
             }}
           >
