@@ -38,24 +38,11 @@ interface LegislaturesData {
 
 export function aggregateData(
   legislaturesData: LegislaturesData[],
-): Omit<
-  Politician,
-  | "quantidadeLegislaturas"
-  | "primeiraLegislatura"
-  | "ultimaLegislatura"
-  | "tenure"
-  | "tenureString"
->[] {
+): Politician[] {
+  // Now returns full Politician objects
   const politiciansMap = new Map<
     string,
-    Omit<
-      Politician,
-      | "quantidadeLegislaturas"
-      | "primeiraLegislatura"
-      | "ultimaLegislatura"
-      | "tenure"
-      | "tenureString"
-    >
+    Politician // Now stores full Politician objects
   >();
 
   for (const { house, legislature, data } of legislaturesData) {

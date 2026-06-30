@@ -98,7 +98,17 @@ export const columns: ColumnDef<Politician>[] = [
     accessorKey: "ufs",
     header: ({ column }) => <SortingHeader column={column}>UFs</SortingHeader>,
     cell: ({ row }) => {
-      const ufs = row.original.ufs.map((s) => s.trim()).filter(Boolean);
+      const ufsData = row.original.ufs;
+
+      const ufs = Array.isArray(ufsData)
+        ? ufsData
+        : typeof ufsData === "string"
+          ? (ufsData as string) // <-- Forçamos o TypeScript a aceitar que é string
+              .split(",")
+              .map((s) => s.trim())
+              .filter(Boolean)
+          : [];
+
       return (
         <div className="flex flex-wrap max-w-xs">
           {ufs.map((uf) => (
@@ -131,19 +141,29 @@ export const columns: ColumnDef<Politician>[] = [
     header: ({ column }) => (
       <SortingHeader column={column}>Tempo no Poder</SortingHeader>
     ),
-    // Typed row to avoid any lint errors
     cell: ({ row }: { row: Row<Politician> }) => row.original.tenure,
     sortingFn: (rowA, rowB) => {
       const a = rowA.original;
       const b = rowB.original;
-      // Compare by years, then months, then days for accurate sorting
-      if (a.tempo_anos !== b.tempo_anos) {
-        return a.tempo_anos - b.tempo_anos;
+
+      // Garantimos um valor numérico para a ordenação usando "?? 0"
+      const aAnos = a.tempo_anos ?? 0;
+      const bAnos = b.tempo_anos ?? 0;
+
+      const aMeses = a.tempo_meses ?? 0;
+      const bMeses = b.tempo_meses ?? 0;
+
+      const aDias = a.tempo_dias ?? 0;
+      const bDias = b.tempo_dias ?? 0;
+
+      // Comparamos pelos valores garantidos
+      if (aAnos !== bAnos) {
+        return aAnos - bAnos;
       }
-      if (a.tempo_meses !== b.tempo_meses) {
-        return a.tempo_meses - b.tempo_meses;
+      if (aMeses !== bMeses) {
+        return aMeses - bMeses;
       }
-      return a.tempo_dias - b.tempo_dias;
+      return aDias - bDias;
     },
   },
   // Column for filtering by legislatura (now visible)

@@ -10,10 +10,20 @@ const prisma = new PrismaClient();
  */
 function formatTenure(anos: number, meses: number, dias: number): string {
   const parts: string[] = [];
+
   if (anos > 0) parts.push(`${anos} ${anos === 1 ? "ano" : "anos"}`);
   if (meses > 0) parts.push(`${meses} ${meses === 1 ? "mês" : "meses"}`);
   if (dias > 0) parts.push(`${dias} ${dias === 1 ? "dia" : "dias"}`);
-  return parts.join(", ") || "0 dias";
+
+  if (parts.length === 0) return "0 dias";
+
+  // O Intl.ListFormat cuida de colocar as vírgulas e o "e" antes do último item
+  const formatter = new Intl.ListFormat("pt-BR", {
+    style: "long",
+    type: "conjunction",
+  });
+
+  return formatter.format(parts);
 }
 
 /**

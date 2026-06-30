@@ -1,4 +1,5 @@
 "use client";
+"use no memo";
 
 import { useState, useMemo } from "react";
 import { Politician } from "@/types";
@@ -53,6 +54,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
     legislaturas: false,
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

@@ -1,11 +1,21 @@
 import { Politician, Legislatures, Legislature } from "@/types";
 
 function formatTenure(days: number) {
+  const { years, months, remainingDays } = calculateYearsMonthsDays(days);
+  return `${years} anos, ${months} mêses e ${remainingDays} dias`;
+}
+
+interface TenureBreakdown {
+  years: number;
+  months: number;
+  remainingDays: number;
+}
+
+function calculateYearsMonthsDays(days: number): TenureBreakdown {
   const years = Math.floor(days / 365);
   const months = Math.floor((days % 365) / 30);
   const remainingDays = Math.floor(days % 30);
-
-  return `${years} anos, ${months} mêses e ${remainingDays} dias`;
+  return { years, months, remainingDays };
 }
 
 function calculateTenureInDays(
@@ -49,14 +59,7 @@ function calculateTenureInDays(
 }
 
 export function calculateStatistics(
-  politicians: Omit<
-    Politician,
-    | "quantidadeLegislaturas"
-    | "primeiraLegislatura"
-    | "ultimaLegislatura"
-    | "tenure"
-    | "tenureString"
-  >[],
+  politicians: Politician[], // Input is now full Politician
   legislaturesData: Legislatures,
 ): Politician[] {
   return politicians.map((p) => {
@@ -66,15 +69,21 @@ export function calculateStatistics(
       legislaturesData,
       p.casa as "Deputados" | "Senado",
     );
+    const { years, months, remainingDays } =
+      calculateYearsMonthsDays(tenureInDays);
 
     return {
       ...p,
       legislaturas,
-      quantidadeLegislaturas: legislaturas.length,
+      quantidadeLegislaturas: legislaturas.length, // Update this required field
       primeiraLegislatura: legislaturas[0] || 0,
       ultimaLegislatura: legislaturas[legislaturas.length - 1] || 0,
       ufs: [...new Set(p.ufs)].sort(),
-      tenure: formatTenure(tenureInDays), // Corrected to assign string
+      total_legislaturas: legislaturas.length, // Update this required field
+      tempo_anos: years, // Update this required field
+      tempo_meses: months, // Update this required field
+      tempo_dias: remainingDays, // Update this required field
+      tenure: formatTenure(tenureInDays),
       tenureString: formatTenure(tenureInDays),
     };
   });
