@@ -72,6 +72,49 @@ export async function loadAllPoliticians(): Promise<Politician[]> {
   });
 }
 
+export async function loadDemocracyPoliticians(): Promise<Politician[]> {
+  const parlamentares = await prisma.parlamentar.findMany();
+
+  return (
+    parlamentares
+      .map((p) => {
+        // 1. Aplica o filtro aqui: apenas números válidos maiores ou iguais a 48
+        const legislaturas = p.historico_legislaturas
+          .split(",")
+          .map((num) => parseInt(num.trim(), 10))
+          .filter((num) => !isNaN(num) && num >= 48);
+
+        return {
+          id_unico: p.id_unico,
+          id_original: p.id_original,
+          nome: p.nome ?? "",
+          casa: p.casa,
+          cargo: p.cargo,
+          url_foto: p.url_foto ?? "",
+          // 2. Atualiza os contadores para refletir apenas as legislaturas modernas
+          total_legislaturas: legislaturas.length,
+          quantidadeLegislaturas: legislaturas.length,
+          tempo_anos: p.tempo_anos,
+          tempo_meses: p.tempo_meses,
+          tempo_dias: p.tempo_dias,
+          tenure: formatTenure(p.tempo_anos, p.tempo_meses, p.tempo_dias),
+          ufs: p.ufs
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          partidos: p.partidos
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+          historico_legislaturas: p.historico_legislaturas,
+          legislaturas: legislaturas,
+        };
+      })
+      // 3. Descarta da lista final qualquer político que só tenha atuado antes de 1987
+      .filter((p) => p.legislaturas.length > 0)
+  );
+}
+
 /**
  * Função utilitária para fechar a conexão Prisma quando a aplicação for
  * finalizada (por exemplo, em scripts de build ou testes).

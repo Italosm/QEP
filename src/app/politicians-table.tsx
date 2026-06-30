@@ -215,7 +215,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
               <SelectValue placeholder="Ordenar por..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="false">Geral</SelectItem>
+              <SelectItem value="false">Todas as Legislaturas</SelectItem>
               <SelectItem value="desc">Mais Recente</SelectItem>
               <SelectItem value="asc">Mais Antiga</SelectItem>
             </SelectContent>
