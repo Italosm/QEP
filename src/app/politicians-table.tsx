@@ -171,16 +171,19 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
 
           <Select
             value={table.getColumn("legislaturas")?.getIsSorted() || "desc"}
-            onValueChange={(value) =>
-              table
-                .getColumn("legislaturas")
-                ?.toggleSorting(value === "desc" ? true : false)
-            }
+            onValueChange={(value) => {
+              if (value === "false") {
+                table.getColumn("legislaturas")?.clearSorting();
+              } else {
+                table.getColumn("legislaturas")?.toggleSorting(value === "desc" ? true : false);
+              }
+            }}
           >
             <SelectTrigger>
               <SelectValue placeholder="Ordenar por..." />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="false">Geral</SelectItem>
               <SelectItem value="desc">Mais Recente</SelectItem>
               <SelectItem value="asc">Mais Antiga</SelectItem>
             </SelectContent>
