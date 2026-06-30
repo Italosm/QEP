@@ -61,6 +61,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
   ]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -169,7 +170,7 @@ export function PoliticiansTable({ politicians }: PoliticiansTableProps) {
                   table.getColumn("ufs")?.setFilterValue(undefined)
                 }
               >
-                Todos os UFs
+                Todas as UFs
               </DropdownMenuItem>
               {Object.entries(ufsByRegion).map(([region, regionUfs]) => {
                 const availableUfs = regionUfs.filter((uf) => ufs.includes(uf));
