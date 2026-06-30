@@ -1,5 +1,4 @@
 import { Politician } from "@/types";
-import { normalizeString } from "./normalize";
 
 type House = "Deputados" | "Senado";
 
@@ -10,7 +9,7 @@ interface LegislaturesData {
 }
 
 export function aggregateData(
-  legislaturesData: LegislaturesData[]
+  legislaturesData: LegislaturesData[],
 ): Omit<
   Politician,
   "quantidadeLegislaturas" | "primeiraLegislatura" | "ultimaLegislatura"
@@ -62,8 +61,9 @@ export function aggregateData(
 
       if (politiciansMap.has(id)) {
         const existingPolitician = politiciansMap.get(id)!;
-        if (!existingPolitician.legislaturas.includes(legislature)) {
-          existingPolitician.legislaturas.push(legislature);
+        const legislaturas = existingPolitician.legislaturas ?? [];
+        if (!legislaturas.includes(legislature)) {
+          existingPolitician.legislaturas = [...legislaturas, legislature];
         }
         for (const uf of ufs) {
           if (uf && !existingPolitician.ufs.includes(uf)) {
