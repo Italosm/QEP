@@ -46,7 +46,7 @@ export async function getAllPoliticians(): Promise<Politician[]> {
             .map((uf) => uf.trim())
             .filter(Boolean)
         : [],
-      partidos: r.partidos
+      partidos: r.partidos // Ensure partidos is always an array of strings
         ? r.partidos
             .split(",")
             .map((p) => p.trim())

@@ -27,9 +27,9 @@ export async function loadAllPoliticians(): Promise<Politician[]> {
   // estejam no tipo correto, substituindo possíveis nulls por valores padrão.
   return parlamentares.map((p) => {
     const legislaturas = p.historico_legislaturas
-      .split(',')
-      .map(num => parseInt(num.trim(), 10))
-      .filter(num => !isNaN(num));
+      .split(",")
+      .map((num) => parseInt(num.trim(), 10))
+      .filter((num) => !isNaN(num));
 
     return {
       id_unico: p.id_unico,
@@ -46,14 +46,15 @@ export async function loadAllPoliticians(): Promise<Politician[]> {
       // Formata o tempo de mandato para exibição na tabela
       tenure: formatTenure(p.tempo_anos, p.tempo_meses, p.tempo_dias),
       // Garantir que ufs seja um array de strings para filtragem correta
-      ufs:
-        typeof p.ufs === "string"
-          ? p.ufs
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : p.ufs,
-      partidos: p.partidos,
+      ufs: p.ufs
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      // Garantir que partidos seja um array de strings
+      partidos: p.partidos
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
       historico_legislaturas: p.historico_legislaturas,
       // Corretamente populado a partir do histórico
       legislaturas: legislaturas,

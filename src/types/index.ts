@@ -1,19 +1,20 @@
 // Interface representing a politician record as stored in the SQLite database via Prisma.
 export interface Politician {
   id_unico: string; // primary key
-  id_original: number;
+  id_original?: number; // Made optional as aggregateData doesn't provide it initially
   nome: string;
+  nomeCivil?: string; // Added nomeCivil
   casa: string;
-  cargo: string;
+  cargo?: string; // Made optional as aggregateData doesn't provide it initially
   url_foto: string;
-  total_legislaturas: number;
-  tempo_anos: number;
-  tempo_meses: number;
-  tempo_dias: number;
+  total_legislaturas?: number; // Made optional as aggregateData calculates it later
+  tempo_anos?: number; // Made optional as aggregateData calculates it later
+  tempo_meses?: number; // Made optional as aggregateData calculates it later
+  tempo_dias?: number; // Made optional as aggregateData calculates it later
   // Pode ser string (CSV) ou array de strings; usamos array internamente
   ufs: string[]; // Changed to always be an array
-  partidos: string;
-  historico_legislaturas: string;
+  partidos?: string[]; // Changed to string[] as it's processed as an array, and made optional
+  historico_legislaturas?: string; // Made optional as aggregateData doesn't provide it initially
   // Legacy fields used elsewhere in the UI – keep them for compatibility
   legislaturas?: number[]; // may be empty when sourced from DB
   quantidadeLegislaturas?: number; // alias of total_legislaturas

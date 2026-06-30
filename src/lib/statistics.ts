@@ -64,7 +64,7 @@ export function calculateStatistics(
     const tenureInDays = calculateTenureInDays(
       legislaturas,
       legislaturesData,
-      p.casa,
+      p.casa as "Deputados" | "Senado",
     );
 
     return {
@@ -74,7 +74,7 @@ export function calculateStatistics(
       primeiraLegislatura: legislaturas[0] || 0,
       ultimaLegislatura: legislaturas[legislaturas.length - 1] || 0,
       ufs: [...new Set(p.ufs)].sort(),
-      tenure: tenureInDays,
+      tenure: formatTenure(tenureInDays), // Corrected to assign string
       tenureString: formatTenure(tenureInDays),
     };
   });

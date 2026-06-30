@@ -2,23 +2,59 @@ import { Politician } from "@/types";
 
 type House = "Deputados" | "Senado";
 
+// Define interfaces for the raw politician data structure
+interface RawDeputado {
+  id: string;
+  nome: string;
+  nomeCivil?: string;
+  siglaUf?: string;
+  urlFoto: string;
+}
+
+interface MandatoItem {
+  // New interface for mandate items
+  UfParlamentar: string;
+}
+
+interface RawSenador {
+  IdentificacaoParlamentar: {
+    CodigoParlamentar: string;
+    NomeParlamentar: string;
+    NomeCompletoParlamentar?: string;
+    UrlFotoParlamentar: string;
+  };
+  Mandatos: {
+    Mandato: MandatoItem[] | MandatoItem; // Use MandatoItem
+  };
+}
+
+type RawPolitician = RawDeputado | RawSenador;
+
 interface LegislaturesData {
   house: House;
   legislature: number;
-  data: any[];
+  data: RawPolitician[]; // Changed from any[] to a more specific type
 }
 
 export function aggregateData(
   legislaturesData: LegislaturesData[],
 ): Omit<
   Politician,
-  "quantidadeLegislaturas" | "primeiraLegislatura" | "ultimaLegislatura"
+  | "quantidadeLegislaturas"
+  | "primeiraLegislatura"
+  | "ultimaLegislatura"
+  | "tenure"
+  | "tenureString"
 >[] {
   const politiciansMap = new Map<
     string,
     Omit<
       Politician,
-      "quantidadeLegislaturas" | "primeiraLegislatura" | "ultimaLegislatura"
+      | "quantidadeLegislaturas"
+      | "primeiraLegislatura"
+      | "ultimaLegislatura"
+      | "tenure"
+      | "tenureString"
     >
   >();
 
@@ -36,23 +72,24 @@ export function aggregateData(
       let id: string;
 
       if (house === "Deputados") {
-        originalId = String(rawPolitician.id);
+        const deputado = rawPolitician as RawDeputado;
+        originalId = String(deputado.id);
         id = `deputado-${originalId}`;
-        nome = rawPolitician.nome;
-        nomeCivil = rawPolitician.nomeCivil;
-        ufs = rawPolitician.siglaUf ? [rawPolitician.siglaUf] : [];
-        urlFoto = rawPolitician.urlFoto;
+        nome = deputado.nome;
+        nomeCivil = deputado.nomeCivil;
+        ufs = deputado.siglaUf ? [deputado.siglaUf] : [];
+        urlFoto = deputado.urlFoto;
       } else {
-        originalId = rawPolitician.IdentificacaoParlamentar.CodigoParlamentar;
+        const senador = rawPolitician as RawSenador;
+        originalId = senador.IdentificacaoParlamentar.CodigoParlamentar;
         id = `senador-${originalId}`;
-        nome = rawPolitician.IdentificacaoParlamentar.NomeParlamentar;
-        nomeCivil =
-          rawPolitician.IdentificacaoParlamentar.NomeCompletoParlamentar;
-        const mandatos = Array.isArray(rawPolitician.Mandatos.Mandato)
-          ? rawPolitician.Mandatos.Mandato
-          : [rawPolitician.Mandatos.Mandato];
-        ufs = mandatos.map((m: any) => m.UfParlamentar);
-        urlFoto = rawPolitician.IdentificacaoParlamentar.UrlFotoParlamentar;
+        nome = senador.IdentificacaoParlamentar.NomeParlamentar;
+        nomeCivil = senador.IdentificacaoParlamentar.NomeCompletoParlamentar;
+        const mandatos = Array.isArray(senador.Mandatos.Mandato)
+          ? senador.Mandatos.Mandato
+          : [senador.Mandatos.Mandato];
+        ufs = mandatos.map((m) => m.UfParlamentar); // No more 'any'
+        urlFoto = senador.IdentificacaoParlamentar.UrlFotoParlamentar;
       }
 
       if (!nome) {
@@ -65,10 +102,10 @@ export function aggregateData(
         if (!legislaturas.includes(legislature)) {
           existingPolitician.legislaturas = [...legislaturas, legislature];
         }
-        const existingUfs = existingPolitician.ufs as string[]; // Assert to string[] as it's always stored as an array
         for (const uf of ufs) {
-          if (uf && !existingUfs.includes(uf)) {
-            existingUfs.push(uf);
+          // existingPolitician.ufs is already string[] after the type definition change
+          if (uf && !existingPolitician.ufs.includes(uf)) {
+            existingPolitician.ufs.push(uf);
           }
         }
         existingPolitician.url_foto = urlFoto; // Update photo URL
@@ -81,6 +118,7 @@ export function aggregateData(
           casa: house,
           legislaturas: [legislature],
           ufs: ufs.filter(Boolean),
+          // Other optional properties are implicitly undefined, which is allowed by the updated Politician interface.
         });
       }
     }
