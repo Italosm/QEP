@@ -11,7 +11,7 @@ export interface Politician {
   tempo_meses: number;
   tempo_dias: number;
   // Pode ser string (CSV) ou array de strings; usamos array internamente
-  ufs: string | string[];
+  ufs: string[]; // Changed to always be an array
   partidos: string;
   historico_legislaturas: string;
   // Legacy fields used elsewhere in the UI – keep them for compatibility

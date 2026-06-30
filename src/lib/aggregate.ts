@@ -74,7 +74,7 @@ export function aggregateData(
         existingPolitician.url_foto = urlFoto; // Update photo URL
       } else {
         politiciansMap.set(id, {
-          id,
+          id_unico: id,
           nome,
           nomeCivil,
           url_foto: urlFoto,
