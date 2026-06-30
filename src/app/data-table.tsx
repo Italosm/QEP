@@ -40,7 +40,7 @@ export function DataTable<TData, TValue>({
   columns,
 }: DataTableProps<TData, TValue>) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
       <Table className="divide-y divide-slate-200">
         <TableHeader className="bg-slate-50">
           {table.getHeaderGroups().map((headerGroup) => (

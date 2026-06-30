@@ -129,6 +129,16 @@
   }
 }
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 [data-sorted="asc"],
 [data-sorted="desc"] {
   background-color: #f1f5f9; /* slate-100 */

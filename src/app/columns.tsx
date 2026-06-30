@@ -40,32 +40,25 @@ const SortingHeader = ({
 
 export const columns: ColumnDef<Politician>[] = [
   {
-    accessorKey: "url_foto",
-    header: "",
-    enableSorting: false,
-    cell: ({ row }) => {
-      const src = row.original.url_foto || "/avatar-padrao.png";
-      return (
-        <PoliticianImage
-          className="rounded-full"
-          src={src}
-          alt={`Foto de ${row.original.nome}`}
-          width={40}
-          height={40}
-        />
-      );
-    },
-  },
-  {
     accessorKey: "nome",
     header: ({ column }) => <SortingHeader column={column}>Nome</SortingHeader>,
     cell: ({ row }) => {
+      const src = row.original.url_foto || "/avatar-padrao.png";
       return (
         <Link
           href={`/politico/${row.original.id_unico}`}
-          className="font-medium text-slate-800 hover:underline"
+          className="flex items-center gap-3 group"
         >
-          {row.original.nome}
+          <PoliticianImage
+            className="rounded-full"
+            src={src}
+            alt={`Foto de ${row.original.nome}`}
+            width={40}
+            height={40}
+          />
+          <span className="font-medium text-slate-800 group-hover:underline">
+            {row.original.nome}
+          </span>
         </Link>
       );
     },
